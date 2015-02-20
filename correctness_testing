@@ -1,0 +1,53 @@
+#!/bin/bash
+
+# Test variable number of parallel processes
+for i in $(seq 1 8);
+do
+	SERIAL="$(./relax_serial 100 0.001 -p)"
+	PARALLEL="$(mpirun -np $i ./relax_parallel 100 0.001 -p)"
+	if [ "$SERIAL" == "$PARALLEL" ]
+	then
+   		echo "Passed: Dimension 100 Precision 0.001 with $i processes"
+	else
+		echo "Failed: Dimension 100 Precision 0.001 with $i processes"
+	fi
+done
+
+# Test variable levels of precision
+for i in 0.1 0.01 0.001 0.0001;
+do
+	SERIAL="$(./relax_serial 100 $i -p)"
+	PARALLEL="$(mpirun -np 8 ./relax_parallel 100 $i -p)"
+	if [ "$SERIAL" == "$PARALLEL" ]
+	then
+    		echo "Passed: Dimension 100 Precision $i"
+	else
+		echo "Failed: Dimension 100 Precision $i"
+	fi
+done
+
+# Test varaible dimensions
+for i in 10 50 100 500 1000;
+do
+	SERIAL="$(./relax_serial $i 0.001 -p)"
+	PARALLEL="$(mpirun -np 8 ./relax_parallel $i 0.001 -p)"
+	if [ "$SERIAL" == "$PARALLEL" ]
+	then
+    		echo "Passed: Dimension $i Precision 0.001"
+	else
+		echo "Failed: Dimension $i Precision 0.001"
+	fi
+done
+
+# Test 100 times for reliablity
+for i in $(seq 1 100);
+do
+	SERIAL="$(./relax_serial 50 0.001 -p)"
+	PARALLEL="$(mpirun -np 8 ./relax_parallel 50 0.001 -p)"
+	if [ "$SERIAL" == "$PARALLEL" ]
+	then
+    		echo "Passed: Reliability test $i/100"
+	else
+		echo "Failed: Reliability test $i/100"
+	fi
+done

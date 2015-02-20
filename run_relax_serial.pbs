@@ -1,0 +1,9 @@
+#PBS -A cm30225
+
+#PBS -N relax_serial_kb405
+
+#PBS -l nodes=1:ppn=8
+
+#PBS -l walltime=00:15:00
+
+time ./relax_serial 7500 0.001
